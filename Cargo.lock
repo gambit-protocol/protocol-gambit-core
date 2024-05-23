@@ -793,6 +793,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "integration-tests"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bonding-manager",
+ "cosmwasm-std",
+ "cw-multi-test",
+ "cw-ownable",
+ "epoch-manager",
+ "incentive-manager",
+ "pool-manager",
+ "vault-manager",
+ "white-whale-std",
+ "white-whale-testing",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"

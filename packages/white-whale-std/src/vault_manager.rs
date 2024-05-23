@@ -9,8 +9,8 @@ use std::fmt::{Display, Formatter};
 pub struct InstantiateMsg {
     /// The owner of the contract
     pub owner: String,
-    /// The whale lair address, where protocol fees are distributed
-    pub whale_lair_addr: String,
+    /// The bonding manager address, where protocol fees are distributed
+    pub bonding_manager_addr: String,
     /// The fee to create a vault
     pub vault_creation_fee: Coin,
 }

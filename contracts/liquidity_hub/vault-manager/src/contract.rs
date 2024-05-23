@@ -25,7 +25,7 @@ pub fn instantiate(
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
     let config = Config {
-        whale_lair_addr: deps.api.addr_validate(&msg.whale_lair_addr)?,
+        whale_lair_addr: deps.api.addr_validate(&msg.bonding_manager_addr)?,
         vault_creation_fee: msg.vault_creation_fee.clone(),
         flash_loan_enabled: true,
         deposit_enabled: true,

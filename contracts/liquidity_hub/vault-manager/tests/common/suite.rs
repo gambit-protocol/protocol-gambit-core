@@ -258,7 +258,7 @@ impl TestingSuite {
     ) -> &mut Self {
         let msg = InstantiateMsg {
             owner: self.creator().to_string(),
-            whale_lair_addr,
+            whale_lair_addr: bonding_manager_addr,
             vault_creation_fee,
         };
 
