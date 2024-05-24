@@ -7,11 +7,11 @@ use cw_multi_test::{
     App, AppBuilder, AppResponse, BankKeeper, DistributionKeeper, Executor, FailingModule,
     GovFailingModule, IbcFailingModule, StakeKeeper, WasmKeeper,
 };
+
 use white_whale_std::bonding_manager::{
     BondedResponse, ClaimableRewardBucketsResponse, ExecuteMsg, GlobalIndex, QueryMsg,
     RewardBucket, RewardsResponse, UnbondingResponse, WithdrawableResponse,
 };
-
 use white_whale_std::epoch_manager::epoch_manager::{Epoch, EpochConfig, EpochResponse};
 use white_whale_std::fee::PoolFee;
 use white_whale_std::incentive_manager::{
@@ -19,9 +19,9 @@ use white_whale_std::incentive_manager::{
     PositionsResponse,
 };
 use white_whale_std::pool_manager::{
-    PoolInfoResponse, PoolType, PoolsResponse, ReverseSimulateSwapOperationsResponse,
-    ReverseSimulationResponse, SimulateSwapOperationsResponse, SimulationResponse, SwapOperation,
-    SwapRoute, SwapRoutesResponse,
+    PoolType, PoolsResponse, ReverseSimulateSwapOperationsResponse, ReverseSimulationResponse,
+    SimulateSwapOperationsResponse, SimulationResponse, SwapOperation, SwapRoute,
+    SwapRoutesResponse,
 };
 use white_whale_std::vault_manager::{
     FilterVaultBy, PaybackAssetResponse, ShareResponse, VaultsResponse,
@@ -54,8 +54,8 @@ pub struct TestingSuite {
     pub incentive_manager_addr: Addr,
     pub pool_manager_addr: Addr,
     pub vault_manager_addr: Addr,
-    pub pools: Vec<Addr>,
-    pub vaults: Vec<Addr>,
+    pub pool_identifiers: Vec<String>,
+    pub vault_identifiers: Vec<String>,
 }
 
 /// TestingSuite helpers
@@ -117,7 +117,33 @@ impl TestingSuite {
 
 /// Instantiate
 impl TestingSuite {
-    pub(crate) fn default_with_balances(initial_balance: Vec<Coin>) -> Self {
+    pub(crate) fn default_with_balances() -> Self {
+        let initial_balance = vec![
+            coin(1_000_000_000_000u128, "uwhale"),
+            coin(1_000_000_000_000u128, "uosmo"),
+            coin(1_000_000_000_000u128, "uusdc"),
+            coin(1_000_000_000_000u128, "uusdt"),
+            // ibc token is stablecoin
+            coin(
+                1_000_000_000_000u128,
+                "ibc/BEFB9AB13AB43157A0AF6254AD4B1F565AC0CA0C1760B8339BE7B9E2996F7752",
+            ),
+            coin(
+                1_000_000_000_000u128,
+                "factory/migaloo193lk767456jhkzddnz7kf5jvuzfn67gyfvhc40/ampWHALE",
+            ),
+            coin(
+                1_000_000_000_000u128,
+                "factory/migaloo1ludaslnu24p5eftw499f7ngsc2jkzqdsrvxt75/bWHALE",
+            ),
+            coin(
+                1_000_000_000_000u128,
+                "peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5",
+            ),
+            coin(1_000_000_000_000_000u128, "btc"),
+            coin(1_000_000_000_000_000_000_000_000u128, "inj"),
+        ];
+
         let sender_1 = Addr::unchecked("migaloo1h3s5np57a8cxaca3rdjlgu8jzmr2d2zz55s5y3");
         let sender_2 = Addr::unchecked("migaloo193lk767456jhkzddnz7kf5jvuzfn67gyfvhc40");
         let sender_3 = Addr::unchecked("migaloo1ludaslnu24p5eftw499f7ngsc2jkzqdsrvxt75");
@@ -153,8 +179,8 @@ impl TestingSuite {
             incentive_manager_addr: Addr::unchecked(""),
             pool_manager_addr: Addr::unchecked(""),
             vault_manager_addr: Addr::unchecked(""),
-            pools: vec![],
-            vaults: vec![],
+            pool_identifiers: vec![],
+            vault_identifiers: vec![],
         }
     }
 
