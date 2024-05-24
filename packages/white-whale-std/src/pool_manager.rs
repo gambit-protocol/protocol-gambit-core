@@ -116,6 +116,7 @@ pub struct StableSwapParams {
 /// Contains the pool information
 #[cw_serde]
 pub struct PoolInfo {
+    pub identifier: String,
     /// The asset denoms for the pool.
     pub asset_denoms: Vec<String>,
     /// The LP denom of the pool.
@@ -332,9 +333,17 @@ pub enum QueryMsg {
         /// The operations to perform.
         operations: Vec<SwapOperation>,
     },
-    /// Retrieves the pool information for the given pool identifier.
-    #[returns(PoolInfoResponse)]
-    Pool { pool_identifier: String },
+    /// Retrieves the pools information.
+    #[returns(PoolsResponse)]
+    Pools {
+        /// If provided, the query will return the pool with the given identifier, otherwise, it
+        /// will return all pools.
+        pool_identifier: Option<String>,
+        /// An optional parameter specifying what pool identifier to start searching after.
+        start_after: Option<String>,
+        /// An optional parameter specifying the maximum number of pools to return.
+        limit: Option<u32>,
+    },
     /// Retrieves the creator of the swap route to get from offer to ask asset. The creator of
     /// the swap route can remove it.
     #[returns(SwapRouteCreatorResponse)]
@@ -448,4 +457,11 @@ pub struct ReverseSimulateSwapOperationsResponse {
 pub struct SwapRouteCreatorResponse {
     /// The creator of the swap route.
     pub creator: String,
+}
+
+/// The response for the `Pools` query.
+#[cw_serde]
+pub struct PoolsResponse {
+    /// The pools on the contract.
+    pub pools: Vec<PoolInfoResponse>,
 }

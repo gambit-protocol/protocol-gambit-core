@@ -1,11 +1,12 @@
 use std::cmp::Ordering;
 
 use cosmwasm_std::{coin, ensure, Coin, Decimal256, Deps, Fraction, Order, StdResult, Uint128};
+use cw_storage_plus::Bound;
 
 use white_whale_std::pool_manager::{
-    AssetDecimalsResponse, Config, PoolInfoResponse, PoolType, ReverseSimulationResponse,
-    SimulateSwapOperationsResponse, SimulationResponse, SwapOperation, SwapRoute,
-    SwapRouteCreatorResponse, SwapRouteResponse, SwapRoutesResponse,
+    AssetDecimalsResponse, Config, PoolInfoResponse, PoolType, PoolsResponse,
+    ReverseSimulationResponse, SimulateSwapOperationsResponse, SimulationResponse, SwapOperation,
+    SwapRoute, SwapRouteCreatorResponse, SwapRouteResponse, SwapRoutesResponse,
 };
 
 use crate::helpers::get_asset_indexes_in_pool;
@@ -283,17 +284,6 @@ pub fn get_swap_route_creator(
     })
 }
 
-/// Gets the pool info for a given pool identifier. Returns a [PoolInfoResponse].
-pub fn get_pool(deps: Deps, pool_identifier: String) -> Result<PoolInfoResponse, ContractError> {
-    let pool = POOLS.load(deps.storage, &pool_identifier)?;
-    let total_share = deps.querier.query_supply(pool.lp_denom)?;
-
-    Ok(PoolInfoResponse {
-        pool_info: POOLS.load(deps.storage, &pool_identifier)?,
-        total_share,
-    })
-}
-
 /// This function iterates over the swap operations, simulates each swap
 /// to get the final amount after all the swaps.
 pub fn simulate_swap_operations(
@@ -360,4 +350,45 @@ pub fn reverse_simulate_swap_operations(
     }
 
     Ok(SimulateSwapOperationsResponse { amount })
+}
+
+// settings for pagination
+pub(crate) const MAX_LIMIT: u32 = 100;
+const DEFAULT_LIMIT: u32 = 10;
+
+/// Queries the pools with optional parameters.
+pub(crate) fn query_pools(
+    deps: Deps,
+    pool_identifier: Option<String>,
+    start_after: Option<String>,
+    limit: Option<u32>,
+) -> Result<PoolsResponse, ContractError> {
+    let pools = if pool_identifier.is_some() {
+        let pool_info = POOLS.load(deps.storage, &pool_identifier.unwrap())?;
+        let total_share = deps.querier.query_supply(pool_info.clone().lp_denom)?;
+
+        vec![PoolInfoResponse {
+            pool_info,
+            total_share,
+        }]
+    } else {
+        let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
+        let start = cw_utils::calc_range_start_string(start_after).map(Bound::ExclusiveRaw);
+
+        POOLS
+            .range(deps.storage, start, None, Order::Ascending)
+            .take(limit)
+            .map(|item| {
+                let (_, pool_info) = item?;
+                let total_share = deps.querier.query_supply(pool_info.clone().lp_denom)?;
+
+                Ok(PoolInfoResponse {
+                    pool_info,
+                    total_share,
+                })
+            })
+            .collect::<StdResult<Vec<PoolInfoResponse>>>()?
+    };
+
+    Ok(PoolsResponse { pools })
 }

@@ -19,9 +19,9 @@ use white_whale_std::incentive_manager::{
     PositionsResponse,
 };
 use white_whale_std::pool_manager::{
-    PoolInfoResponse, PoolType, ReverseSimulateSwapOperationsResponse, ReverseSimulationResponse,
-    SimulateSwapOperationsResponse, SimulationResponse, SwapOperation, SwapRoute,
-    SwapRoutesResponse,
+    PoolInfoResponse, PoolType, PoolsResponse, ReverseSimulateSwapOperationsResponse,
+    ReverseSimulationResponse, SimulateSwapOperationsResponse, SimulationResponse, SwapOperation,
+    SwapRoute, SwapRoutesResponse,
 };
 use white_whale_std::vault_manager::{
     FilterVaultBy, PaybackAssetResponse, ShareResponse, VaultsResponse,
@@ -922,14 +922,20 @@ impl TestingSuite {
         self
     }
 
-    pub(crate) fn query_pool_info(
+    pub(crate) fn query_pools(
         &self,
-        pool_identifier: String,
-        result: impl Fn(StdResult<PoolInfoResponse>),
+        pool_identifier: Option<String>,
+        start_after: Option<String>,
+        limit: Option<u32>,
+        result: impl Fn(StdResult<PoolsResponse>),
     ) -> &Self {
-        let pool_info_response: StdResult<PoolInfoResponse> = self.app.wrap().query_wasm_smart(
+        let pool_info_response: StdResult<PoolsResponse> = self.app.wrap().query_wasm_smart(
             &self.pool_manager_addr,
-            &white_whale_std::pool_manager::QueryMsg::Pool { pool_identifier },
+            &white_whale_std::pool_manager::QueryMsg::Pools {
+                pool_identifier,
+                start_after,
+                limit,
+            },
         );
 
         result(pool_info_response);

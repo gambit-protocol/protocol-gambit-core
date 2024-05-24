@@ -304,6 +304,8 @@ pub mod pools {
                     result.unwrap();
                 },
             );
+
+        //suite.query_pools()
     }
 }
 

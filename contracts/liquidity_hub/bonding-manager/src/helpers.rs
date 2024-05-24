@@ -12,7 +12,7 @@ use white_whale_std::bonding_manager::{
 use white_whale_std::constants::LP_SYMBOL;
 use white_whale_std::epoch_manager::epoch_manager::EpochResponse;
 use white_whale_std::pool_manager::{
-    PoolInfoResponse, SimulateSwapOperationsResponse, SwapRouteResponse,
+    PoolsResponse, SimulateSwapOperationsResponse, SwapRouteResponse,
 };
 use white_whale_std::pool_network::asset;
 use white_whale_std::pool_network::asset::aggregate_coins;
@@ -109,10 +109,12 @@ pub fn handle_lp_tokens_rewards(
             extract_pool_identifier(&lp_token.denom).ok_or(ContractError::AssetMismatch)?;
 
         // make sure a pool with the given identifier exists
-        let pool: StdResult<PoolInfoResponse> = deps.querier.query_wasm_smart(
+        let pool: StdResult<PoolsResponse> = deps.querier.query_wasm_smart(
             config.pool_manager_addr.to_string(),
-            &white_whale_std::pool_manager::QueryMsg::Pool {
-                pool_identifier: pool_identifier.to_string(),
+            &white_whale_std::pool_manager::QueryMsg::Pools {
+                pool_identifier: Some(pool_identifier.to_string()),
+                start_after: None,
+                limit: None,
             },
         );
 
@@ -202,21 +204,25 @@ pub fn swap_coins_to_main_token(
         // check if the pool has any assets, if not skip the swap
         // Note we are only checking the first operation here.
         // Might be better to another loop to check all operations
-        let pool_query = white_whale_std::pool_manager::QueryMsg::Pool {
-            pool_identifier: swap_routes
-                .swap_route
-                .swap_operations
-                .first()
-                .unwrap()
-                .get_pool_identifer(),
+        let pool_query = white_whale_std::pool_manager::QueryMsg::Pools {
+            pool_identifier: Some(
+                swap_routes
+                    .swap_route
+                    .swap_operations
+                    .first()
+                    .unwrap()
+                    .get_pool_identifer(),
+            ),
+            start_after: None,
+            limit: None,
         };
         let mut skip_swap = false;
         // Query for the pool to check if it has any assets
-        let resp: PoolInfoResponse = deps
+        let resp: PoolsResponse = deps
             .querier
             .query_wasm_smart(config.pool_manager_addr.to_string(), &pool_query)?;
         // Check pair 'assets' and if either one has 0 amount then don't do swaps
-        resp.pool_info.assets.iter().for_each(|asset| {
+        resp.pools[0].pool_info.assets.iter().for_each(|asset| {
             if asset.amount.is_zero() {
                 skip_swap = true;
             }
