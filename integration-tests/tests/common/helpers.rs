@@ -202,7 +202,7 @@ pub mod pools {
                 vec![6, 6],
                 helpers::fees::pool_fees_0(),
                 PoolType::ConstantProduct,
-                Some("uwhale-usdc-free".to_string()),
+                Some("uwhale-uusdc-free".to_string()),
                 vec![coin(1_000u128, "uwhale")],
                 |result| {
                     result.unwrap();
@@ -214,7 +214,7 @@ pub mod pools {
                 vec![6, 6],
                 helpers::fees::pool_fees_03(),
                 PoolType::ConstantProduct,
-                Some("uwhale-usdc-cheap".to_string()),
+                Some("uwhale-uusdc-cheap".to_string()),
                 vec![coin(1_000u128, "uwhale")],
                 |result| {
                     result.unwrap();
@@ -226,7 +226,7 @@ pub mod pools {
                 vec![6, 6],
                 helpers::fees::pool_fees_1(),
                 PoolType::ConstantProduct,
-                Some("uwhale-usdc-expensive".to_string()),
+                Some("uwhale-uusdc-expensive".to_string()),
                 vec![coin(1_000u128, "uwhale")],
                 |result| {
                     result.unwrap();

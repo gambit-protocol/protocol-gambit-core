@@ -159,6 +159,9 @@ pub enum ContractError {
 
     #[error("Invalid swap route: {0}")]
     InvalidSwapRoute(SwapRoute),
+
+    #[error("The pool has no assets")]
+    PoolHasNoAssets,
 }
 
 impl From<semver::Error> for ContractError {

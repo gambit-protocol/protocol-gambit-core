@@ -33,6 +33,9 @@ use crate::common::suite_contracts::{
     pool_manager_contract, vault_manager_contract,
 };
 
+pub const bWHALE: &str = "factory/migaloo1ludaslnu24p5eftw499f7ngsc2jkzqdsrvxt75/bWHALE";
+pub const ampWHALE: &str = "factory/migaloo193lk767456jhkzddnz7kf5jvuzfn67gyfvhc40/ampWHALE";
+
 type OsmosisTokenFactoryApp = App<
     BankKeeper,
     MockApiBech32,
@@ -128,14 +131,8 @@ impl TestingSuite {
                 1_000_000_000_000u128,
                 "ibc/BEFB9AB13AB43157A0AF6254AD4B1F565AC0CA0C1760B8339BE7B9E2996F7752",
             ),
-            coin(
-                1_000_000_000_000u128,
-                "factory/migaloo193lk767456jhkzddnz7kf5jvuzfn67gyfvhc40/ampWHALE",
-            ),
-            coin(
-                1_000_000_000_000u128,
-                "factory/migaloo1ludaslnu24p5eftw499f7ngsc2jkzqdsrvxt75/bWHALE",
-            ),
+            coin(1_000_000_000_000u128, ampWHALE),
+            coin(1_000_000_000_000u128, bWHALE),
             coin(
                 1_000_000_000_000u128,
                 "peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5",
@@ -209,7 +206,7 @@ impl TestingSuite {
             distribution_denom: "uwhale".to_string(),
             unbonding_period: 1u64,
             growth_rate: Decimal::one(),
-            bonding_assets: vec!["ampWHALE".to_string(), "bWHALE".to_string()],
+            bonding_assets: vec![ampWHALE.to_string(), bWHALE.to_string()],
             grace_period: 21,
             epoch_manager_addr,
         };
