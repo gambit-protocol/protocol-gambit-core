@@ -835,7 +835,7 @@ impl TestingSuite {
     #[track_caller]
     pub(crate) fn provide_liquidity(
         &mut self,
-        sender: Addr,
+        sender: &Addr,
         pool_identifier: String,
         unlocking_duration: Option<u64>,
         lock_position_identifier: Option<String>,
@@ -853,10 +853,12 @@ impl TestingSuite {
             lock_position_identifier,
         };
 
-        result(
-            self.app
-                .execute_contract(sender, self.pool_manager_addr.clone(), &msg, &funds),
-        );
+        result(self.app.execute_contract(
+            sender.clone(),
+            self.pool_manager_addr.clone(),
+            &msg,
+            &funds,
+        ));
 
         self
     }

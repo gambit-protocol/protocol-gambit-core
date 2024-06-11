@@ -25,6 +25,7 @@ fn epic_test() {
     // create some pools, vaults, incentives
     helpers::pools::create_pools(&mut suite, alice.clone());
     helpers::vaults::create_vaults(&mut suite, bob.clone());
+    helpers::vaults::add_vault_liquidity(&mut suite, bob.clone());
     helpers::incentives::create_incentives(&mut suite, carol.clone());
 
     suite
@@ -105,18 +106,6 @@ fn epic_test() {
                         .unwrap(),
                     pool_manager::ContractError::PoolHasNoAssets
                 );
-            },
-        )
-        .provide_liquidity(
-            alice.clone(),
-            "uwhale-uusdc-cheap".to_string(),
-            None,
-            None,
-            None,
-            None,
-            vec![coin(100_000_000, "uwhale"), coin(100_000_000, "uusdc")],
-            |result| {
-                result.unwrap();
             },
         )
         // check we're on epoch 24

@@ -188,7 +188,7 @@ pub mod pools {
 
     use cosmwasm_std::{coin, Addr};
 
-    use white_whale_std::pool_manager::PoolType;
+    use white_whale_std::pool_manager::{PoolType, SwapOperation, SwapRoute};
 
     use crate::common::helpers;
     use crate::common::suite::TestingSuite;
@@ -309,6 +309,236 @@ pub mod pools {
                 },
             );
 
+        // add liquidity
+        suite
+            .provide_liquidity(
+                &sender,
+                "uwhale-uusdc-free".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uwhale"), coin(100_000_000, "uusdc")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "uwhale-uusdc-cheap".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uwhale"), coin(100_000_000, "uusdc")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "uwhale-uusdc-expensive".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uwhale"), coin(100_000_000, "uusdc")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "uwhale-uosmo-cheap".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uwhale"), coin(100_000_000, "uosmo")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "3pool-stable".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![
+                    coin(100_000_000, "uusdc"),
+                    coin(100_000_000, "uusdt"),
+                    coin(
+                        100_000_000,
+                        "ibc/BEFB9AB13AB43157A0AF6254AD4B1F565AC0CA0C1760B8339BE7B9E2996F7752",
+                    ),
+                ],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "2pool-stable".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uusdc"), coin(100_000_000, "uusdt")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "uwhale-inj".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![
+                    coin(100_000_000, "uwhale"),
+                    coin(100_000_000_000_000_000_000, "inj"),
+                ],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "uwhale-btc".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![coin(100_000_000, "uwhale"), coin(10_000_000_000, "btc")],
+                |result| {
+                    result.unwrap();
+                },
+            )
+            .provide_liquidity(
+                &sender,
+                "peggy-uusdc".to_string(),
+                None,
+                None,
+                None,
+                None,
+                vec![
+                    coin(
+                        100_000_000,
+                        "peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5",
+                    ),
+                    coin(100_000_000, "uusdc"),
+                ],
+                |result| {
+                    result.unwrap();
+                },
+            );
+
+        // add swap routes
+        suite
+            .add_swap_routes(
+                sender.clone(),
+                vec![
+                    SwapRoute {
+                        offer_asset_denom: "uusdc".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uusdc".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-uusdc-cheap".to_string(),
+                            }
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "uosmo".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uosmo".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-uosmo-cheap".to_string(),
+                            }
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "uusdt".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uusdt".to_string(),
+                                token_out_denom: "uusdc".to_string(),
+                                pool_identifier: "2pool-stable".to_string(),
+                            },
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uusdc".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-uusdc-cheap".to_string(),
+                            },
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "ibc/BEFB9AB13AB43157A0AF6254AD4B1F565AC0CA0C1760B8339BE7B9E2996F7752".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "ibc/BEFB9AB13AB43157A0AF6254AD4B1F565AC0CA0C1760B8339BE7B9E2996F7752".to_string(),
+                                token_out_denom: "uusdc".to_string(),
+                                pool_identifier: "3pool-stable".to_string(),
+                            },
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uusdc".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-uusdc-cheap".to_string(),
+                            },
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "inj".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "inj".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-inj".to_string(),
+                            }
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "btc".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "btc".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-btc".to_string(),
+                            }
+                        ],
+                    },
+                    SwapRoute {
+                        offer_asset_denom: "peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5".to_string(),
+                        ask_asset_denom: "uwhale".to_string(),
+                        swap_operations: vec![
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "peggy0x87aB3B4C8661e07D6372361211B96ed4Dc36B1B5".to_string(),
+                                token_out_denom: "uusdc".to_string(),
+                                pool_identifier: "peggy-uusdc".to_string(),
+                            },
+                            SwapOperation::WhaleSwap {
+                                token_in_denom: "uusdc".to_string(),
+                                token_out_denom: "uwhale".to_string(),
+                                pool_identifier: "uwhale-uusdc-cheap".to_string(),
+                            },
+                        ],
+                    },
+                ],
+                |result| {
+                    result.unwrap();
+                },
+            );
+
         let pool_identifiers = RefCell::new(vec![]);
 
         suite.query_pools(None, None, None, |result| {
@@ -376,6 +606,10 @@ pub mod vaults {
         });
 
         suite.vault_identifiers = vault_identifiers.into_inner();
+    }
+
+    pub(crate) fn add_vault_liquidity(p0: &mut TestingSuite, p1: Addr) {
+        //todo
     }
 }
 
