@@ -1,3 +1,5 @@
+use std::result;
+
 use cosmwasm_std::testing::MockStorage;
 use cosmwasm_std::{
     coin, Addr, Coin, CosmosMsg, Decimal, Empty, StdResult, Timestamp, Uint128, Uint64,
@@ -88,6 +90,14 @@ impl TestingSuite {
         self.add_one_day().create_epoch(creator, |res| {
             res.unwrap();
         });
+
+        self
+    }
+
+    pub(crate) fn add_epochs(&mut self, n: u64) -> &mut Self {
+        for _ in 0..n {
+            self.add_one_epoch();
+        }
 
         self
     }
@@ -183,11 +193,28 @@ impl TestingSuite {
 
     #[track_caller]
     pub(crate) fn instantiate(&mut self) -> &mut Self {
+        let creator = self.creator().clone();
+
         self.create_epoch_manager();
         self.create_bonding_manager();
         self.create_incentive_manager();
         self.create_pool_manager();
         self.create_vault_manager();
+
+        self.update_bonding_manager_contract_addresses(creator.clone(), |response| {
+            response.unwrap();
+        });
+
+        let bonding_manager_addr = self.bonding_manager_addr.clone();
+        let incentive_manager_addr = self.incentive_manager_addr.clone();
+
+        self.add_hook(creator.clone(), bonding_manager_addr, |result| {
+            result.unwrap();
+        });
+
+        self.add_hook(creator, incentive_manager_addr, |result| {
+            result.unwrap();
+        });
 
         // May 23th 2024 15:00:00 UTC
         let timestamp = Timestamp::from_seconds(1716476400u64);
@@ -288,6 +315,7 @@ impl TestingSuite {
             )
             .unwrap();
     }
+
     fn create_pool_manager(&mut self) {
         let pool_manager_contract = self.app.store_code(pool_manager_contract());
 
@@ -314,6 +342,7 @@ impl TestingSuite {
             )
             .unwrap();
     }
+
     fn create_vault_manager(&mut self) {
         let vault_manager_contract = self.app.store_code(vault_manager_contract());
 
@@ -347,16 +376,18 @@ impl TestingSuite {
     #[track_caller]
     pub(crate) fn bond(
         &mut self,
-        sender: Addr,
+        sender: &Addr,
         funds: &[Coin],
         response: impl Fn(Result<AppResponse, anyhow::Error>),
     ) -> &mut Self {
         let msg = ExecuteMsg::Bond;
 
-        response(
-            self.app
-                .execute_contract(sender, self.bonding_manager_addr.clone(), &msg, funds),
-        );
+        response(self.app.execute_contract(
+            sender.clone(),
+            self.bonding_manager_addr.clone(),
+            &msg,
+            funds,
+        ));
 
         self
     }
@@ -381,15 +412,17 @@ impl TestingSuite {
     #[track_caller]
     pub(crate) fn claim_bonding_rewards(
         &mut self,
-        sender: Addr,
+        sender: &Addr,
         response: impl Fn(Result<AppResponse, anyhow::Error>),
     ) -> &mut Self {
         let msg = ExecuteMsg::Claim {};
 
-        response(
-            self.app
-                .execute_contract(sender, self.bonding_manager_addr.clone(), &msg, &[]),
-        );
+        response(self.app.execute_contract(
+            sender.clone(),
+            self.bonding_manager_addr.clone(),
+            &msg,
+            &[],
+        ));
 
         self
     }
@@ -402,6 +435,30 @@ impl TestingSuite {
         response: impl Fn(Result<AppResponse, anyhow::Error>),
     ) -> &mut Self {
         let msg = ExecuteMsg::Withdraw { denom };
+
+        response(
+            self.app
+                .execute_contract(sender, self.bonding_manager_addr.clone(), &msg, &[]),
+        );
+
+        self
+    }
+
+    #[track_caller]
+    pub(crate) fn update_bonding_manager_contract_addresses(
+        &mut self,
+        sender: Addr,
+        response: impl Fn(Result<AppResponse, anyhow::Error>),
+    ) -> &mut Self {
+        let epoch_manager_addr = self.epoch_manager_addr.to_string();
+        let pool_manager_addr = self.pool_manager_addr.to_string();
+
+        let msg = ExecuteMsg::UpdateConfig {
+            epoch_manager_addr: Some(epoch_manager_addr),
+            pool_manager_addr: Some(pool_manager_addr),
+            unbonding_period: None,
+            growth_rate: None,
+        };
 
         response(
             self.app
@@ -434,7 +491,7 @@ impl TestingSuite {
     #[track_caller]
     pub(crate) fn query_claimable_reward_buckets(
         &mut self,
-        address: Option<Addr>,
+        address: Option<&Addr>,
         response: impl Fn(StdResult<(&mut Self, Vec<RewardBucket>)>),
     ) -> &mut Self {
         let address = if let Some(address) = address {
