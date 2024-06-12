@@ -266,7 +266,7 @@ pub mod pools {
                 vec![6, 6],
                 helpers::fees::pool_fees_005(),
                 PoolType::StableSwap { amp: 85u64 },
-                Some("2pool-stable".to_string()),
+                Some("uusdc-uusdt".to_string()),
                 vec![coin(1_000u128, "uwhale")],
                 |result| {
                     result.unwrap();
@@ -380,7 +380,7 @@ pub mod pools {
             )
             .provide_liquidity(
                 &sender,
-                "2pool-stable".to_string(),
+                "uusdc-uusdt".to_string(),
                 None,
                 None,
                 None,
@@ -470,7 +470,7 @@ pub mod pools {
                             SwapOperation::WhaleSwap {
                                 token_in_denom: "uusdt".to_string(),
                                 token_out_denom: "uusdc".to_string(),
-                                pool_identifier: "2pool-stable".to_string(),
+                                pool_identifier: "uusdc-uusdt".to_string(),
                             },
                             SwapOperation::WhaleSwap {
                                 token_in_denom: "uusdc".to_string(),
@@ -608,7 +608,7 @@ pub mod vaults {
         suite.vault_identifiers = vault_identifiers.into_inner();
     }
 
-    pub(crate) fn add_vault_liquidity(p0: &mut TestingSuite, p1: Addr) {
+    pub(crate) fn add_vault_liquidity(_p0: &mut TestingSuite, _p1: Addr) {
         //todo
     }
 }
