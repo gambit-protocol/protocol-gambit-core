@@ -665,6 +665,19 @@ impl TestingSuite {
 
         self
     }
+
+    #[track_caller]
+    pub(crate) fn query_current_time(
+        &mut self,
+        mut result: impl FnMut(StdResult<Timestamp>),
+    ) -> &mut Self {
+        let current_time_response: StdResult<Timestamp> = Ok(self.app.block_info().time);
+
+        result(current_time_response);
+
+        self
+    }
+
     #[track_caller]
     pub(crate) fn _query_hooks(
         &mut self,
