@@ -1,4 +1,4 @@
-<a href="https://whitewhale.money/">
+<a href="https://gambit.capital/">
   <h1 align="center">
     <picture>
       <img alt="Gambit Protocol Furya" src="https://github.com/gambit-protocol/gambit-assets/blob/main/imgs/github-gambit.png">
@@ -6,7 +6,7 @@
   </h1>
 </a>
 
-[![codecov](https://codecov.io/github/White-Whale-Defi-Platform/migaloo-core/branch/main/graph/badge.svg?token=Y8S6P1KBS2)](https://codecov.io/github/White-Whale-Defi-Platform/migaloo-core)
+[![codecov](https://codecov.io/github/gambit-protocol/protocol-gambit-core/branch/main/graph/badge.svg?token=Y8S6P1KBS2)](https://codecov.io/github/White-Whale-Defi-Platform/furya-core)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/6401/badge)](https://bestpractices.coreinfrastructure.org/projects/6401)
 [![Discord badge][]][Discord invite]
 [![Twitter handle][]][Twitter badge]
@@ -21,26 +21,26 @@
 
 ## Getting started
 
-To get started with `migaloo-core`, please go through the [contributing guide](./docs/CONTRIBUTING.md) to see the 
+To get started with `furya-core`, please go through the [contributing guide](./docs/CONTRIBUTING.md) to see the 
 different ways to contribute to the project.
 
 ## Resources
 
-1. [Website](https://whitewhale.money/)
-2. [LitePaper](https://whitewhale.money/LitepaperV2.pdf)
-3. [Docs](https://ww0-1.gitbook.io/migaloo-docs/) 
+1. [Website](https://gambit.capital/)
+2. [LitePaper](https://gambit.capital/LitepaperV2.pdf)
+3. [Docs](https://ww0-1.gitbook.io/furya-docs/) 
 4. [Discord](https://discord.com/invite/tSxyyCWgYX)
 5. [Twitter](https://twitter.com/WhiteWhaleDefi)
 6. [Telegram](https://t.me/whitewhaleofficial)
 
 ## Deployed contracts
 
-White Whale Migaloo is a protocol that exists across multiple chains. You can find contract addresses for different chain deployments 
-in the [documentation](https://ww0-1.gitbook.io/migaloo-docs/smart-contracts/deployments).
+gambit furya is a protocol that exists across multiple chains. You can find contract addresses for different chain deployments 
+in the [documentation](https://ww0-1.gitbook.io/furya-docs/smart-contracts/deployments).
 
-## Building and Deploying Migaloo
+## Building and Deploying furya
 
-To build and deploy Migaloo's smart contracts, there are a series of deployment scripts under `scripts/`. You need at 
+To build and deploy furya's smart contracts, there are a series of deployment scripts under `scripts/`. You need at 
 least Rust v1.65.0 to compile the contracts. 
 
 ### Build scripts
@@ -114,17 +114,17 @@ scripts/deployment/deploy_pool-sh -c juno -p scripts/deployment/input/pool.json
 scripts/deployment/deploy_vault-sh -c juno -v scripts/deployment/input/vault.json
 ```
 
-## Testing Migaloo
+## Testing furya
 
 To run the tests, run `cargo test`. You can also run `cargo tarpaulin -v` to get test code coverage.
 
 ## Disclaimer
 
-**Use the contracts and the White Whale app at your own risk!**
+**Use the contracts and the gambit app at your own risk!**
 
 ## Audit
 
-Migaloo core contracts have been audited by [SCV-Security](https://www.scv.services/). The report can be found [here](https://github.com/SCV-Security/PublicReports/blob/main/CW/WhiteWhale/White%20Whale%20-%20Migaloo%20Audit%20Report%20v1.0.pdf).
+furya core contracts have been audited by [SCV-Security](https://www.scv.services/). The report can be found [here](https://github.com/SCV-Security/PublicReports/blob/main/CW/WhiteWhale/White%20Whale%20-%20furya%20Audit%20Report%20v1.0.pdf).
 
 ## Contributing
 
